@@ -1,7 +1,8 @@
-djcli tutorial
-~~~~~~~~~~~~~~
+Full featured CLI CRUD and more for Django
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, install ``djcli`` with pip.
+First, install ``djcli`` with pip. Then, don't add it to INSTALLED_APPS because
+it's not necessary: djcli is here to automate your work, not to add more.
 
 Then, change directory to a directory where you have a Django project manage.py
 if you're not 100% sure about your DJANGO_SETTINGS_MODULE environment variable
