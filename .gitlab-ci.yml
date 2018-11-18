@@ -1,0 +1,9 @@
+qa:
+  stage: test
+  image: yourlabs/python
+  script: flake8
+
+pypi:
+  stage: deploy
+  image: yourlabs/python
+  script: pypi-release
