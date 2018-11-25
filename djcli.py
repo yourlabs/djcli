@@ -35,9 +35,11 @@ def _clitoo_setup():
                 if m:
                     mod = m.group(1)
                     print(f'{colored.fg(2)}'
-                          f'Auto-detected DJANGO_SETTINGS_MODULE={mod}')
+                          f'Auto-detected DJANGO_SETTINGS_MODULE={mod}',
+                          file=sys.stderr)
                     print(f'If incorrect, set DJANGO_SETTINGS_MODULE env var'
-                          f' {colored.attr(0)}')
+                          f' {colored.attr(0)}',
+                          file=sys.stderr)
                     os.environ['DJANGO_SETTINGS_MODULE'] = mod
                     break
 
