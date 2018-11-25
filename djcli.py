@@ -214,11 +214,18 @@ def settings(*names):
     Well it's over now ! Try this instead:
 
         djcli settings DATABASES INSTALLED_APPS # etc
+
+    To have only the value printed to stdout, use --value, ie.::
+
+        MEDIA_ROOT=$(djcli settings --value MEDIA_ROOT)
     """
     from django.conf import settings
 
     for name in names:
-        print(f'{name}={pprint.pformat(getattr(settings, name))}')
+        if 'value' in clitoo.context.args:
+            print(f'{getattr(settings, name)}')
+        else:
+            print(f'{name}={pprint.pformat(getattr(settings, name))}')
 
 
 def _cli():
