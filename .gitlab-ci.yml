@@ -6,7 +6,7 @@ qa:
 test:
   stage: test
   image: yourlabs/python
-  script: py.test -v
+  script: pip install django && py.test -v
 
 pypi:
   stage: deploy
