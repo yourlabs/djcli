@@ -224,6 +224,8 @@ def settings(*names):
         names = dir(settings)
 
     for name in names:
+        if name.startswith('_'):
+            return "Not a part of Settings"
         if 'value' in clitoo.context.args:
             print(f'{getattr(settings, name)}')
         else:
