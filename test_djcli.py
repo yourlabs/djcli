@@ -133,8 +133,16 @@ def test_settings(capsys):
 
 
 @pytest.mark.django_db
+def test_empty_settings(capsys):
+    """Test settings method and to check settings all variable."""
+    djcli.settings()
+    cap = capsys.readouterr()
+    assert 'LANGUAGES' in cap.out
+
+
+@pytest.mark.django_db
 def test_save_for_args_or_kwargs(capsys):
-    """Test save method for args or kwargs.
+    """Test save method for args and kwargs.
 
     Create new user 'TestUser1' for args and kwargs
     Test usernames:

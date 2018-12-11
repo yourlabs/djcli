@@ -220,6 +220,8 @@ def settings(*names):
         MEDIA_ROOT=$(djcli settings --value MEDIA_ROOT)
     """
     from django.conf import settings
+    if len(names) < 1:
+        names = dir(settings)
 
     for name in names:
         if 'value' in clitoo.context.args:
