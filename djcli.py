@@ -130,7 +130,7 @@ def ls(modelname, *args, **kwargs):
         sys.exit(0)
 
     _printqs(models, args)
-ls._cli2_color = cli2.GREEN
+ls.cli2 = dict(color=cli2.GREEN)
 
 
 def delete(modelname, *args, **kwargs):
@@ -157,7 +157,7 @@ def delete(modelname, *args, **kwargs):
     count = len(qs)
     qs.delete()
     print(f'Deleted {count} objects')
-delete._cli2_color = cli2.RED
+delete.cli2 = dict(color=cli2.RED)
 
 
 def detail(modelname, *args, **kwargs):
@@ -176,7 +176,7 @@ def detail(modelname, *args, **kwargs):
         for k, v in _model_data(obj).items()
         if k in args or not args
     ]))
-detail._cli2_color = cli2.GREEN
+detail.cli2 = dict(color=cli2.GREEN)
 
 
 def chpasswd(password, **kwargs):
@@ -197,7 +197,7 @@ def chpasswd(password, **kwargs):
     user.set_password(password)
     user.save()
     print('Password updated !')
-chpasswd._cli2_color = cli2.YELLOW
+chpasswd.cli2 = dict(color=cli2.YELLOW)
 
 
 def settings(*names):
@@ -224,4 +224,7 @@ def settings(*names):
             print(f'{getattr(settings, name)}')
         else:
             print(f'{name}={pprint.pformat(getattr(settings, name))}')
-settings._cli2_color = cli2.GREEN
+settings.cli2 = dict(color=cli2.GREEN)
+
+
+console_script = cli2.ConsoleScript(sys.argv, __doc__).add_module('djcli')
