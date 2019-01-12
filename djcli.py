@@ -1,11 +1,7 @@
 """djcli: time for CLI party !
 
-It would like DJANGO_SETTINGS_MODULE env var, and does not require to be in
-INSTALLED_APPS because automation software should be made automatically
-available and adding to INSTALLED_APPS is a manual step.
-
-Otherwise, it will try to find out DJANGO_SETTINGS_MODULE itself, searching for
-a manage.py in the current working directory or sub directory.
+Will try to auto-detect $DJANGO_SETTINGS_MODULE by searching for settings.py
+from the current directory.
 """
 import glob
 import os
@@ -14,9 +10,7 @@ import re
 import sys
 import traceback
 
-import clitoo
-
-import colored
+import cli2
 
 import django
 from django.apps import apps
@@ -24,7 +18,7 @@ from django.apps import apps
 import tabulate
 
 
-def _clitoo_setup():
+def _cli2_setup():
     found = glob.glob('**/manage.py', recursive=True)
     if found and 'DJANGO_SETTINGS_MODULE' not in os.environ:
         if '.' not in sys.path:
@@ -34,11 +28,11 @@ def _clitoo_setup():
                 m = re.match('.*[\'"]([^\'"]*.settings[^\'"]*)[\'"]', line)
                 if m:
                     mod = m.group(1)
-                    print(f'{colored.fg(2)}'
+                    print(f'{cli2.GREEN}'
                           f'Auto-detected DJANGO_SETTINGS_MODULE={mod}',
                           file=sys.stderr)
                     print(f'If incorrect, set DJANGO_SETTINGS_MODULE env var'
-                          f' {colored.attr(0)}',
+                          f' {cli2.RESET}',
                           file=sys.stderr)
                     os.environ['DJANGO_SETTINGS_MODULE'] = mod
                     break
@@ -46,14 +40,14 @@ def _clitoo_setup():
     try:
         django.setup()
     except Exception:
-        print(f'{colored.fg(1)}Setting up django has failed !')
+        print(f'{cli2.RED}Setting up django has failed !')
         if 'DJANGO_SETTINGS_MODULE' in os.environ:
             print(f'DJANGO_SETTINGS_MODULE='
                   f'{os.getenv("DJANGO_SETTINGS_MODULE")}')
             traceback.print_exc()
         else:
             print('DJANGO_SETTINGS_MODULE env var not set !')
-        print(f'{colored.attr(0)}')
+        print(f'{cli2.RESET}')
         sys.exit(1)
 
 
@@ -126,7 +120,7 @@ def ls(modelname, *args, **kwargs):
 
     Show username and email for superusers::
 
-        djcli auth.user is_superuser=1 username email
+        djcli ls auth.user is_superuser=1 username email
     """
 
     model = _model_get(modelname)
@@ -136,6 +130,7 @@ def ls(modelname, *args, **kwargs):
         sys.exit(0)
 
     _printqs(models, args)
+ls._cli2_color = cli2.GREEN
 
 
 def delete(modelname, *args, **kwargs):
@@ -162,6 +157,7 @@ def delete(modelname, *args, **kwargs):
     count = len(qs)
     qs.delete()
     print(f'Deleted {count} objects')
+delete._cli2_color = cli2.RED
 
 
 def detail(modelname, *args, **kwargs):
@@ -171,7 +167,7 @@ def detail(modelname, *args, **kwargs):
 
     Example::
 
-        djcli detail pk=123
+        djcli cat pk=123
     """
     model = _model_get(modelname)
     obj = model.objects.get(**kwargs)
@@ -180,6 +176,7 @@ def detail(modelname, *args, **kwargs):
         for k, v in _model_data(obj).items()
         if k in args or not args
     ]))
+detail._cli2_color = cli2.GREEN
 
 
 def chpasswd(password, **kwargs):
@@ -200,6 +197,7 @@ def chpasswd(password, **kwargs):
     user.set_password(password)
     user.save()
     print('Password updated !')
+chpasswd._cli2_color = cli2.YELLOW
 
 
 def settings(*names):
@@ -226,15 +224,4 @@ def settings(*names):
             print(f'{getattr(settings, name)}')
         else:
             print(f'{name}={pprint.pformat(getattr(settings, name))}')
-
-
-def _cli():
-    clitoo.context.default_module = 'djcli'
-    return clitoo.main()
-
-
-"""
-Note that djcli pulls clitoo as dependency, you can also use the clitoo command
-to make your python callbacks work in CLI too ! Just run the clitoo command to
-get started ;)
-"""
+settings._cli2_color = cli2.GREEN
