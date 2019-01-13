@@ -18,38 +18,6 @@ from django.apps import apps
 import tabulate
 
 
-def _cli2_setup():
-    found = glob.glob('**/manage.py', recursive=True)
-    if found and 'DJANGO_SETTINGS_MODULE' not in os.environ:
-        if '.' not in sys.path:
-            sys.path.insert(0, '.')
-        with open(found[0], 'r') as f:
-            for line in f.readlines():
-                m = re.match('.*[\'"]([^\'"]*.settings[^\'"]*)[\'"]', line)
-                if m:
-                    mod = m.group(1)
-                    print(f'{cli2.GREEN}'
-                          f'Auto-detected DJANGO_SETTINGS_MODULE={mod}',
-                          file=sys.stderr)
-                    print(f'If incorrect, set DJANGO_SETTINGS_MODULE env var'
-                          f' {cli2.RESET}',
-                          file=sys.stderr)
-                    os.environ['DJANGO_SETTINGS_MODULE'] = mod
-                    break
-
-    try:
-        django.setup()
-    except Exception:
-        print(f'{cli2.RED}Setting up django has failed !')
-        if 'DJANGO_SETTINGS_MODULE' in os.environ:
-            print(f'DJANGO_SETTINGS_MODULE='
-                  f'{os.getenv("DJANGO_SETTINGS_MODULE")}')
-            traceback.print_exc()
-        else:
-            print('DJANGO_SETTINGS_MODULE env var not set !')
-        print(f'{cli2.RESET}')
-        sys.exit(1)
-
 
 def _model_data(obj, keys=None):
     keys = keys or [
@@ -112,6 +80,7 @@ def save(modelname, *args, **kwargs):
     ]))
 
 
+@cli2.config(color=cli2.GREEN)
 def ls(modelname, *args, **kwargs):
     """Search models
 
@@ -130,9 +99,9 @@ def ls(modelname, *args, **kwargs):
         sys.exit(0)
 
     _printqs(models, args)
-ls.cli2 = dict(color=cli2.GREEN)
 
 
+@cli2.config(color=cli2.RED)
 def delete(modelname, *args, **kwargs):
     """
     Delete a model filtered with kwargs.
@@ -157,9 +126,9 @@ def delete(modelname, *args, **kwargs):
     count = len(qs)
     qs.delete()
     print(f'Deleted {count} objects')
-delete.cli2 = dict(color=cli2.RED)
 
 
+@cli2.config(color=cli2.GREEN)
 def detail(modelname, *args, **kwargs):
     """Print detail for a model.
 
@@ -176,7 +145,6 @@ def detail(modelname, *args, **kwargs):
         for k, v in _model_data(obj).items()
         if k in args or not args
     ]))
-detail.cli2 = dict(color=cli2.GREEN)
 
 
 def chpasswd(password, **kwargs):
@@ -197,9 +165,9 @@ def chpasswd(password, **kwargs):
     user.set_password(password)
     user.save()
     print('Password updated !')
-chpasswd.cli2 = dict(color=cli2.YELLOW)
 
 
+@cli2.config(color=cli2.GREEN)
 def settings(*names):
     """Show settings from django.
 
@@ -220,11 +188,51 @@ def settings(*names):
     from django.conf import settings
 
     for name in names:
-        if 'value' in clitoo.context.args:
+        import epdb; epdb.serve()
+        if 'value' in console_script.parser.dashargs:
             print(f'{getattr(settings, name)}')
         else:
             print(f'{name}={pprint.pformat(getattr(settings, name))}')
-settings.cli2 = dict(color=cli2.GREEN)
 
 
-console_script = cli2.ConsoleScript(sys.argv, __doc__).add_module('djcli')
+class ConsoleScript(cli2.ConsoleScript):
+    def django_setup(self):
+        found = glob.glob('**/manage.py', recursive=True)
+        if found and 'DJANGO_SETTINGS_MODULE' not in os.environ:
+            if '.' not in sys.path:
+                sys.path.insert(0, os.path.dirname(found[0]))
+
+            with open(found[0], 'r') as f:
+                for line in f.readlines():
+                    m = re.match('.*[\'"]([^\'"]*.settings[^\'"]*)[\'"]', line)
+                    if m:
+                        mod = m.group(1)
+                        print(f'{cli2.GREEN}'
+                              f'Auto-detected DJANGO_SETTINGS_MODULE={mod}',
+                              file=sys.stderr)
+                        print(f'If incorrect, set DJANGO_SETTINGS_MODULE env var'
+                              f' {cli2.RESET}',
+                              file=sys.stderr)
+                        os.environ['DJANGO_SETTINGS_MODULE'] = mod
+                        break
+
+        try:
+            django.setup()
+        except Exception:
+            print(f'{cli2.RED}Setting up django has failed !')
+            if 'DJANGO_SETTINGS_MODULE' in os.environ:
+                print(f'DJANGO_SETTINGS_MODULE='
+                      f'{os.getenv("DJANGO_SETTINGS_MODULE")}')
+                traceback.print_exc()
+            else:
+                print('DJANGO_SETTINGS_MODULE env var not set !')
+            print(f'{cli2.RESET}')
+            sys.exit(1)
+
+    def call(self, command):
+        if command.name != 'help':
+            self.django_setup()
+        return super().call(command)
+
+
+console_script = ConsoleScript(__doc__).add_module('djcli')

@@ -1,0 +1,17 @@
+stdout:
+------------  --------------------------------
+id            2
+password
+last_login
+is_superuser  False
+username      me
+first_name
+last_name
+email
+is_staff      False
+is_active     True
+date_joined   2019-01-13 03:34:36.938112+00:00
+------------  --------------------------------
+stderr:
+Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
+If incorrect, set DJANGO_SETTINGS_MODULE env var 
