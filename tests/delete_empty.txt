@@ -1,3 +1,5 @@
+command: djcli delete auth.user username
+retcode: 0
 stdout:
 No model to delete !
 stderr:

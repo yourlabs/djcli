@@ -1,3 +1,5 @@
+command: djcli ls auth.user username=me username first_name
+retcode: 0
 stdout:
 ----------  --------
 first_name  username

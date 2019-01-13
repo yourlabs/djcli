@@ -1,3 +1,5 @@
+command: djcli ls
+retcode: 1
 stdout:
 Missing arguments: modelname
 

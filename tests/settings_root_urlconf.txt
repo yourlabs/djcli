@@ -1,3 +1,5 @@
+command: djcli settings --value ROOT_URLCONF
+retcode: 0
 stdout:
 djcli_test_project.urls
 stderr:

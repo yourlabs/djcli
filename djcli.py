@@ -45,38 +45,28 @@ def _model_get(modelname):
 
 
 def save(modelname, *args, **kwargs):
-    """Idempotent create function.
+    """Update or create a model.
 
-    First argument must be model name, for apps.get_model.
-    With only keyword arguments, it will pass them to create().
-    If you pass arguments, it will use update_or_create, passing
-    any keyword argument name as defaults to update_or_create
-    instead of kwarg.
-
-    # Create a user, not idempotent
-    djcli save auth.user username=foo email=joe@example.com
-
-    # Create or update a user based on email, idempotent yay !
-    djcli save auth.user email username=foo email=joe@example.com
-
-    # oh, and with settings.* support for your model swapping fun hacks ;)
-    djcli save settings.AUTH_USER_MODEL ...
+    # Create user or update their email by username
+    djcli save auth.user username=test +email=new@email.com
     """
     model = _model_get(modelname)
 
-    if not args:
+    defaults = dict()
+    for name in [*kwargs.keys()]:
+        if name.startswith('+'):
+            defaults[name[1:]] = kwargs.pop(name)
+
+    if defaults:
+        obj, created = model.objects.update_or_create(defaults, **kwargs)
+    else:
         obj = model.objects.create(**kwargs)
         created = True
-    else:
-        defaults = {}
-        for key, value in kwargs.copy().items():
-            if key not in args:
-                defaults[key] = kwargs.pop(key)
-        obj, created = model.objects.update_or_create(defaults, **kwargs)
 
     print(tabulate.tabulate([
         (k, v)
         for k, v in _model_data(obj).items()
+        if k in args or not args and k not in console_script.parser.dashargs
     ]))
 
 
@@ -161,7 +151,10 @@ def chpasswd(password, **kwargs):
 
     from django.conf import settings
     model = apps.get_model(settings.AUTH_USER_MODEL)
-    user = model.objects.get(**kwargs)
+    try:
+        user = model.objects.get(**kwargs)
+    except model.DoesNotExist as e:
+        raise cli2.Cli2Exception(str(e))
     user.set_password(password)
     user.save()
     print('Password updated !')

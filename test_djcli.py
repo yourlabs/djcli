@@ -18,11 +18,11 @@ import djcli
     ('settings_root_urlconf', 'settings --value ROOT_URLCONF'),
     ('ls_missing_model', 'ls'),
     ('ls_empty', 'ls auth.user username first_name'),
-    ('chpasswd_empty', 'chpasswd username=fail username'),
+    ('chpasswd_empty', 'chpasswd username=fail'),
     ('delete_empty', 'delete auth.user username'),
-    ('save_staff', 'save auth.user is_staff=True username=staff username is_staff'),
+    ('save_staff', 'save auth.user is_staff=True username=staff -password -date_joined'),
     ('chpasswd', 'chpasswd test username=staff'),
-    ('save_me', 'save auth.user username=me first_name=test first_name'),
+    ('save_me', 'save auth.user username=me first_name=test -password -date_joined'),
     ('ls', 'ls auth.user first_name username is_staff'),
     ('ls_me', 'ls auth.user username=me username first_name'),
 ])
@@ -41,7 +41,6 @@ def test_djcli(name, command):
             f'tests/{name}.txt',
             'djcli ' + command,
             [
-                '.*password.*',
-                '.*date_joined.*',
+                '^pbkdf2_sha256[^ ]*',
             ]
         )
