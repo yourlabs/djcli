@@ -1,0 +1,5 @@
+.eggs
+__pycache__
+djcli.egg-info/
+db.sqlite3
+
