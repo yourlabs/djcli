@@ -1,8 +1,5 @@
 stdout:
-----------  --------
-first_name  username
-test        me
-----------  --------
+djcli_test_project.urls
 stderr:
 Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
 If incorrect, set DJANGO_SETTINGS_MODULE env var 

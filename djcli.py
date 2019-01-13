@@ -188,7 +188,6 @@ def settings(*names):
     from django.conf import settings
 
     for name in names:
-        import epdb; epdb.serve()
         if 'value' in console_script.parser.dashargs:
             print(f'{getattr(settings, name)}')
         else:
