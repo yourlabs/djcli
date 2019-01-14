@@ -13,6 +13,3 @@ Example:
 
     djcli chpasswd username=... thepassword
     echo thepassword | djcli chpasswd username=... -
-stderr:
-Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
-If incorrect, set DJANGO_SETTINGS_MODULE env var 

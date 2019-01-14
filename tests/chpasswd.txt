@@ -1,7 +1,0 @@
-command: djcli chpasswd test username=staff
-retcode: 0
-stdout:
-Password updated !
-stderr:
-Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
-If incorrect, set DJANGO_SETTINGS_MODULE env var 

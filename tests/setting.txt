@@ -1,0 +1,16 @@
+command: djcli setting INSTALLED_APPS DATABASES.default
+retcode: 0
+stdout:
+INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth']
+DATABASES.default={'ATOMIC_REQUESTS': False,
+ 'AUTOCOMMIT': True,
+ 'CONN_MAX_AGE': 0,
+ 'ENGINE': 'django.db.backends.sqlite3',
+ 'HOST': '',
+ 'NAME': 'file:memorydb_default?mode=memory&cache=shared',
+ 'OPTIONS': {},
+ 'PASSWORD': '',
+ 'PORT': '',
+ 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIRROR': None, 'NAME': None},
+ 'TIME_ZONE': None,
+ 'USER': ''}

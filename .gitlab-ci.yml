@@ -1,7 +1,7 @@
 qa:
   stage: test
   image: yourlabs/python
-  script: flake8
+  script: flake8 djcli.py test_djcli.py conftest.py
 
 test:
   stage: test

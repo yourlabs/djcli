@@ -1,11 +1,8 @@
 command: djcli ls auth.user first_name username is_staff
-retcode: 0
+retcode: 1
 stdout:
 ----------  --------  --------
 first_name  is_staff  username
             True      staff
 test        False     me
 ----------  --------  --------
-stderr:
-Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
-If incorrect, set DJANGO_SETTINGS_MODULE env var 

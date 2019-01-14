@@ -1,0 +1,4 @@
+command: djcli setting -r DATABASES.default.NAME
+retcode: 0
+stdout:
+file:memorydb_default?mode=memory&cache=shared

@@ -1,6 +1,7 @@
 command: djcli save auth.user username=me first_name=test -password -date_joined
-retcode: 0
+retcode: 1
 stdout:
+Created
 ------------  -----
 id            2
 last_login
@@ -12,6 +13,3 @@ email
 is_staff      False
 is_active     True
 ------------  -----
-stderr:
-Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
-If incorrect, set DJANGO_SETTINGS_MODULE env var 

@@ -1,7 +1,4 @@
 command: djcli delete auth.user username
-retcode: 0
+retcode: 1
 stdout:
 No model to delete !
-stderr:
-Auto-detected DJANGO_SETTINGS_MODULE=djcli_test_project.settings
-If incorrect, set DJANGO_SETTINGS_MODULE env var 
