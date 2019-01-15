@@ -1,2 +1,0 @@
-cli2
-tabulate
