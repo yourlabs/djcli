@@ -12,4 +12,9 @@ setup(
     license='MIT',
     keywords='django cli',
     python_requires='>=3',
+    entry_points={
+        'console_scripts': [
+            'djcli = djcli:console_script',
+        ],
+    },
 )
