@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='djcli',
-    versioning='dev',
+    versioning='post',
     setup_requires='setupmeta',
     author='James Pic',
     author_email='jamespic@gmail.com',
