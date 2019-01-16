@@ -1,4 +1,4 @@
-command: djcli save auth.user username=me first_name=test -password -date_joined
+command: djcli save auth.user +username=me first_name=test -password -date_joined
 retcode: 1
 stdout:
 Created

@@ -1,4 +1,4 @@
-command: djcli save auth.user is_staff=True username=staff -password -date_joined
+command: djcli save auth.user username=me is_staff=True username=staff -password -date_joined
 retcode: 1
 stdout:
 Created

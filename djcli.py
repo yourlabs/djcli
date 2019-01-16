@@ -70,20 +70,21 @@ def save(modelname, *args, **kwargs):
     djcli save auth.user +username=test email=new@email.com -password
 
     # same but show only email
-    djcli save auth.user +username=test +email=new@email.com email
+    djcli save auth.user +username=test email=new@email.com email
     """
     model = _model_get(modelname)
 
     defaults = dict()
     for name in [*kwargs.keys()]:
         if name.startswith('+'):
-            defaults[name[1:]] = kwargs.pop(name)
+            kwargs[name[1:]] = kwargs.pop(name)
+        else:
+            defaults[name] = kwargs.pop(name)
 
     if defaults:
         obj, created = model.objects.update_or_create(defaults, **kwargs)
     else:
-        obj = model.objects.create(**kwargs)
-        created = True
+        obj, created = model.objects.get_or_create(**kwargs)
 
     if created:
         print(f'{cli2.YELLOW}Created{cli2.RESET}')

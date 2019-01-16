@@ -23,9 +23,10 @@ def test_djcli_empty(name, command):
 
 
 story = [
-    'save auth.user is_staff=True username=staff -password -date_joined',
+    'save auth.user username=me is_staff=True'
+    ' username=staff -password -date_joined',
     'chpasswd test username=staff',
-    'save auth.user username=me first_name=test -password -date_joined',
+    'save auth.user +username=me first_name=test -password -date_joined',
     'ls auth.user first_name username is_staff',
     'ls auth.user username=me username first_name',
 ]
