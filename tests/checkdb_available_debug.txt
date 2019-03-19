@@ -1,0 +1,4 @@
+command: djcli checkdb --debug
+retcode: 1
+stdout:
+Checkdb parameters: sleep_for=1.0; max_tries=10

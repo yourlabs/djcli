@@ -215,6 +215,63 @@ def setting(*names):
             print(f'{name}={pprint.pformat(importable.target)}')
 
 
+@cli2.command(color=cli2.GREEN)
+@cli2.option('quiet', alias='q', help='Silence all output.')
+@cli2.option('debug', alias='d', help='Display debug output (overrides -q).')
+def checkdb(sleep_for=1.0, max_tries=10):
+    """Check all database connections.
+    
+    Verify that all the databases are ready (e.g. before attempting to start
+    Django dev server).
+
+    :param float sleep: Seconds to sleep between attempts.
+    :param int repeat:  Number of attempts to retry before failing.
+    """
+    from django.conf import settings
+    from django.db import connections
+    from django.db.utils import OperationalError
+    from time import sleep
+
+    quiet = console_script.parser.options.get('quiet', False)
+    debug = console_script.parser.options.get('debug', False)
+    sleep_for = float(sleep_for)
+    max_tries = int(max_tries)
+    exc = None
+
+    if debug:
+        print(
+            f'Checkdb parameters: sleep_for={sleep_for}; max_tries={max_tries}'
+        )
+
+    for conn in connections:
+        db_conn = False
+        attempts = 0
+        while attempts < max_tries:
+            try:
+                connections[conn].ensure_connection()
+                db_conn = True
+            except (OperationalError,) as e:
+                if debug:
+                    print(
+                        f'Waiting {sleep_for} second(s) for database {conn}...'
+                    )
+                exc = e
+                sleep(sleep_for)
+                attempts += 1
+            if db_conn:
+                break
+        if not db_conn:
+            break
+    
+    if not db_conn:
+        if not quiet or debug:
+            print(
+                f'Attempting to connect to database {conn} returns an error:'
+            )
+            print(exc)
+        sys.exit(1)
+
+
 class ConsoleScript(cli2.ConsoleScript):
     def setup(self):
         mod = os.getenv('DJANGO_SETTINGS_MODULE', settings())
