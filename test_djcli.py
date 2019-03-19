@@ -31,13 +31,13 @@ def test_djcli_empty(name, command):
 @pytest.mark.django_db
 def test_checkdb_missing(name, command, settings):
     """Override settings to simulate a missing database.
-    
+
     Add a new database to avoid conflict with the test runner in-memory db.
     """
     settings.DATABASES['fake_sqlite3'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': '/fake_djcli_test_path/fake.sqlite3',
-    }                                     
+    }
     cli2.autotest(f'tests/{name}.txt', 'djcli ' + command)
 
 

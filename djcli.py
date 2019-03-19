@@ -220,14 +220,13 @@ def setting(*names):
 @cli2.option('debug', alias='d', help='Display debug output (overrides -q).')
 def checkdb(sleep_for=1.0, max_tries=10):
     """Check all database connections.
-    
+
     Verify that all the databases are ready (e.g. before attempting to start
     Django dev server).
 
     :param float sleep: Seconds to sleep between attempts.
     :param int repeat:  Number of attempts to retry before failing.
     """
-    from django.conf import settings
     from django.db import connections
     from django.db.utils import OperationalError
     from time import sleep
@@ -262,7 +261,7 @@ def checkdb(sleep_for=1.0, max_tries=10):
                 break
         if not db_conn:
             break
-    
+
     if not db_conn:
         if not quiet or debug:
             print(
@@ -273,6 +272,7 @@ def checkdb(sleep_for=1.0, max_tries=10):
 
 
 class ConsoleScript(cli2.ConsoleScript):
+
     def setup(self):
         mod = os.getenv('DJANGO_SETTINGS_MODULE', settings())
 
