@@ -288,4 +288,3 @@ USE_X_FORWARDED_PORT=False
 WSGI_APPLICATION=None
 X_FRAME_OPTIONS='SAMEORIGIN'
 YEAR_MONTH_FORMAT='F Y'
-default_settings=<module 'django.conf.global_settings' from '/virtualenvs/kcl/lib/python3.6/site-packages/django/conf/global_settings.py'>

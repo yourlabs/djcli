@@ -39,4 +39,3 @@ EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'
 EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'
 INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth']
 INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth']
-default_settings=<module 'django.conf.global_settings' from '/virtualenvs/kcl/lib/python3.6/site-packages/django/conf/global_settings.py'>

@@ -4,6 +4,7 @@ Will try to auto-detect $DJANGO_SETTINGS_MODULE by searching for settings.py
 from the current directory.
 """
 import glob
+import inspect
 import os
 import pprint
 import re
@@ -236,7 +237,8 @@ def setting(*names):
             setting = getattr(importable.target, name)
             if ((not name.startswith('_')
                  and not callable(setting)
-                 and (print_all or importable.target.is_overridden(name)))):
+                 and (print_all or importable.target.is_overridden(name))
+                 and not inspect.ismodule(setting))):
                 print_setting(setting)
 
 
