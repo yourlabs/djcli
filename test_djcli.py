@@ -12,6 +12,8 @@ import cli2
     ('settings', 'settings'),
     ('setting_raw', 'setting -r DATABASES.default.NAME'),
     ('setting', 'setting INSTALLED_APPS DATABASES.default'),
+    ('setting_no_args', 'setting'),
+    ('setting_no_args_all', 'setting -a'),
     ('ls_missing_model', 'ls'),
     ('ls_empty', 'ls auth.user username first_name'),
     ('chpasswd_empty', 'chpasswd username=fail'),
