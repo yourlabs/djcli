@@ -1,0 +1,41 @@
+command: djcli setting
+retcode: 0
+stdout:
+ALLOWED_HOSTS=['testserver']
+ALLOWED_HOSTS=['testserver']
+DATABASES={'default': {'ATOMIC_REQUESTS': False,
+             'AUTOCOMMIT': True,
+             'CONN_MAX_AGE': 0,
+             'ENGINE': 'django.db.backends.sqlite3',
+             'HOST': '',
+             'NAME': 'file:memorydb_default?mode=memory&cache=shared',
+             'OPTIONS': {},
+             'PASSWORD': '',
+             'PORT': '',
+             'TEST': {'CHARSET': None,
+                      'COLLATION': None,
+                      'MIRROR': None,
+                      'NAME': None},
+             'TIME_ZONE': None,
+             'USER': ''}}
+DATABASES={'default': {'ATOMIC_REQUESTS': False,
+             'AUTOCOMMIT': True,
+             'CONN_MAX_AGE': 0,
+             'ENGINE': 'django.db.backends.sqlite3',
+             'HOST': '',
+             'NAME': 'file:memorydb_default?mode=memory&cache=shared',
+             'OPTIONS': {},
+             'PASSWORD': '',
+             'PORT': '',
+             'TEST': {'CHARSET': None,
+                      'COLLATION': None,
+                      'MIRROR': None,
+                      'NAME': None},
+             'TIME_ZONE': None,
+             'USER': ''}}
+DEBUG=False
+DEBUG=False
+EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'
+EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'
+INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth']
+INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth']
