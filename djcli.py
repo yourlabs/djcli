@@ -8,13 +8,12 @@ import os
 import pprint
 import re
 import sys
+import tabulate
 import traceback
 
 import cli2
 
 from django.apps import apps
-
-import tabulate
 
 
 @cli2.command(color=cli2.GREEN)
@@ -190,6 +189,8 @@ def chpasswd(password, **kwargs):
 
 @cli2.command(color=cli2.GREEN)
 @cli2.option('raw', alias='r', color=cli2.GREEN, help='Raw value print')
+@cli2.option('all', alias='a', color=cli2.GREEN,
+             help='Print all settings, including default values')
 def setting(*names):
     """Show settings from django.
 
@@ -201,18 +202,42 @@ def setting(*names):
 
     Well it's over now ! Try this instead to pretty print some setting:
 
-        djcli setting DATABASES INSTALLED_APPS # etc
+        djcli setting DATABASES INSTALLED_APPS  # etc.
 
-    The --raw option will call raw print:
+    The --raw option will call raw print, to enable the following:
 
-        MEDIA_ROOT=$(djcli setting --value MEDIA_ROOT)
+        MEDIA_ROOT=$(djcli setting --raw MEDIA_ROOT)
+
+    With no arguments, all settings in settings.py will be printed.
+    The --all option, with no arguments, will cause all Django settings to be
+    printed, including those with default values.
     """
-    for name in names:
-        importable = cli2.Importable.factory(f'django.conf.settings.{name}')
-        if console_script.parser.options.get('raw', False):
-            print(importable.target)
+
+    def print_setting(setting):
+        # setting = getattr(importable.target, name)
+        if raw:
+            print(setting)
         else:
-            print(f'{name}={pprint.pformat(importable.target)}')
+            print(f'{name}={pprint.pformat(setting)}')
+
+    raw = console_script.parser.options.get('raw', False)
+    print_all = console_script.parser.options.get('all', False)
+    if names:
+        for name in names:
+            importable = cli2.Importable.factory(
+                f'django.conf.settings.{name}'
+            )
+            print_setting(importable.target)
+    else:
+        importable = cli2.Importable.factory(
+            f'django.conf.settings'
+        )
+        for name in dir(importable.target):
+            setting = getattr(importable.target, name)
+            if ((not name.startswith('_')
+                 and not callable(setting)
+                 and (print_all or importable.target.is_overridden(name)))):
+                print_setting(setting)
 
 
 class ConsoleScript(cli2.ConsoleScript):
