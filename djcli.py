@@ -154,7 +154,7 @@ def detail(modelname, *args, **kwargs):
 
     Example::
 
-        djcli cat pk=123
+        djcli widgets.Widget pk=123
     """
     model = _model_get(modelname)
     obj = model.objects.get(**kwargs)
