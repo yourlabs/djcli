@@ -19,4 +19,4 @@ script: |
 ---
 name: test
 help: Run test in a python3 venv by default.
-script: shyml_install && py.test -vv --cov --strict -r fEsxXw ${@-.}
+script: shyml_install && py.test -vv --cov=djcli .
