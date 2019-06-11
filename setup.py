@@ -13,6 +13,9 @@ setup(
     keywords='django cli',
     python_requires='>=3',
     install_requires=['cli2', 'tabulate'],
+    extras_require={
+        'test': ['django', 'pytest', 'pytest-cov', 'pytest-django'],
+    },
     entry_points={
         'console_scripts': [
             'djcli = djcli:console_script',
