@@ -20,6 +20,9 @@ import cli2
     ('delete_empty', 'delete auth.user username'),
     ('dbcheck_available', 'dbcheck'),
     ('dbcheck_available_debug', 'dbcheck --debug'),
+    ('run_non_importable', 'run django.fake.should.fail'),
+    ('run_callable', 'run django.core.management.commands.loaddata.humanize /foo/bar'),
+    ('run_noncallable', 'run django.core.checks.messages.ERROR'),
 ])
 @pytest.mark.django_db
 def test_djcli_empty(name, command):

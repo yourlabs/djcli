@@ -1,0 +1,4 @@
+command: djcli run django.core.checks.messages.ERROR
+retcode: 1
+stdout:
+40

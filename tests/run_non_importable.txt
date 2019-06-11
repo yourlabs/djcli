@@ -1,0 +1,4 @@
+command: djcli run django.fake.should.fail
+retcode: 1
+stdout:
+Could not import django.fake.should.fail

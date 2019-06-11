@@ -1,0 +1,4 @@
+command: djcli run django.core.management.commands.loaddata.humanize /foo/bar
+retcode: 1
+stdout:
+'/foo/bar'

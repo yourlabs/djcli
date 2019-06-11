@@ -165,6 +165,24 @@ def detail(modelname, *args, **kwargs):
     ]))
 
 
+def run(callback, *args, **kwargs):
+    """Execute a callback in Django context.
+
+    Args and kwargs are forwarded to callee.
+
+    Example::
+
+        djcli run yourapp.models.somecallback
+    """
+    importable = cli2.Importable.factory(callback)
+    if importable.target is None:
+        raise cli2.Cli2Exception('Could not import ' + callback)
+    elif callable(importable.target):
+        return importable.target(*args, **kwargs)
+    else:
+        return importable.target
+
+
 def chpasswd(password, **kwargs):
     """Change the password for user.
 
