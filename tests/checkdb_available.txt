@@ -1,3 +1,0 @@
-command: djcli checkdb
-retcode: 1
-stdout:

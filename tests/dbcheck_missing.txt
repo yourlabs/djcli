@@ -1,4 +1,4 @@
-command: djcli checkdb sleep_for=0.1 max_tries=5
+command: djcli dbcheck sleep_for=0.1 max_tries=5
 retcode: 1
 stdout:
 Attempting to connect to database fake_sqlite3 returns an error:

@@ -245,14 +245,14 @@ def setting(*names):
 @cli2.command(color=cli2.GREEN)
 @cli2.option('quiet', alias='q', help='Silence all output.')
 @cli2.option('debug', alias='d', help='Display debug output (overrides -q).')
-def checkdb(sleep_for=1.0, max_tries=10):
+def dbcheck(sleep_for=1.0, max_tries=10):
     """Check all database connections.
 
     Verify that all the databases are ready (e.g. before attempting to start
     Django dev server).
 
-    :param float sleep: Seconds to sleep between attempts.
-    :param int repeat:  Number of attempts to retry before failing.
+    :param float sleep_for: Seconds to sleep between attempts.
+    :param int max_tries:   Number of attempts to retry before failing.
     """
     from django.db import connections
     from django.db.utils import OperationalError
@@ -266,7 +266,7 @@ def checkdb(sleep_for=1.0, max_tries=10):
 
     if debug:
         print(
-            f'Checkdb parameters: sleep_for={sleep_for}; max_tries={max_tries}'
+            f'dbcheck parameters: sleep_for={sleep_for}; max_tries={max_tries}'
         )
 
     for conn in connections:

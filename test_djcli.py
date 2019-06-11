@@ -18,8 +18,8 @@ import cli2
     ('ls_empty', 'ls auth.user username first_name'),
     ('chpasswd_empty', 'chpasswd username=fail'),
     ('delete_empty', 'delete auth.user username'),
-    ('checkdb_available', 'checkdb'),
-    ('checkdb_available_debug', 'checkdb --debug'),
+    ('dbcheck_available', 'dbcheck'),
+    ('dbcheck_available_debug', 'dbcheck --debug'),
 ])
 @pytest.mark.django_db
 def test_djcli_empty(name, command):
@@ -27,11 +27,11 @@ def test_djcli_empty(name, command):
 
 
 @pytest.mark.parametrize('name,command', [
-    ('checkdb_missing', 'checkdb sleep_for=0.1 max_tries=5'),
-    ('checkdb_missing_debug', 'checkdb sleep_for=0.1 max_tries=5 --debug'),
+    ('dbcheck_missing', 'dbcheck sleep_for=0.1 max_tries=5'),
+    ('dbcheck_missing_debug', 'dbcheck sleep_for=0.1 max_tries=5 --debug'),
 ])
 @pytest.mark.django_db
-def test_checkdb_missing(name, command, settings):
+def test_dbcheck_missing(name, command, settings):
     """Override settings to simulate a missing database.
 
     Add a new database to avoid conflict with the test runner in-memory db.

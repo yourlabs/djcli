@@ -1,0 +1,3 @@
+command: djcli dbcheck
+retcode: 1
+stdout:
