@@ -114,7 +114,7 @@ def ls(modelname, *args, **kwargs):
     models = model.objects.filter(**kwargs)
     if not models:
         print('No result found !')
-        sys.exit(0)
+        return
 
     _printqs(models, args)
 

@@ -1,4 +1,4 @@
 command: djcli ls auth.user username first_name
-retcode: 0
+retcode: 1
 stdout:
 No result found !
