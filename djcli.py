@@ -263,7 +263,7 @@ def setting(*names):
 @cli2.command(color=cli2.GREEN)
 @cli2.option('quiet', alias='q', help='Silence all output.')
 @cli2.option('debug', alias='d', help='Display debug output (overrides -q).')
-def dbcheck(sleep_for=1.0, max_tries=10):
+def dbcheck(sleep_for=1.0, max_tries=None):
     """Check all database connections.
 
     Verify that all the databases are ready (e.g. before attempting to start
@@ -279,7 +279,7 @@ def dbcheck(sleep_for=1.0, max_tries=10):
     quiet = console_script.parser.options.get('quiet', False)
     debug = console_script.parser.options.get('debug', False)
     sleep_for = float(sleep_for)
-    max_tries = int(max_tries)
+    max_tries = int(max_tries) if max_tries else None
     exc = None
 
     if debug:
@@ -290,7 +290,10 @@ def dbcheck(sleep_for=1.0, max_tries=10):
     for conn in connections:
         db_conn = False
         attempts = 0
-        while attempts < max_tries:
+        def wait():
+            return attempts < max_tries if max_tries else True
+
+        while wait():
             try:
                 connections[conn].ensure_connection()
                 db_conn = True
