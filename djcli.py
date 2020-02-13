@@ -316,7 +316,7 @@ def dbcheck(sleep_for=1.0, max_tries=None):
                 f'Attempting to connect to database {conn} returns an error:'
             )
             print(exc)
-        sys.exit(1)
+        console_script.exit_code = 1
 
 
 class ConsoleScript(cli2.ConsoleScript):
