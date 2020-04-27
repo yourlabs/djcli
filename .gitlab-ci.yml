@@ -6,7 +6,7 @@ qa:
 test:
   stage: test
   image: yourlabs/python
-  script: ./sh.yml test
+  script: pip install -Ue .[test] && py.test -vv --cov=djcli .
 
 pypi:
   stage: deploy

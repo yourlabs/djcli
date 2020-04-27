@@ -17,7 +17,6 @@ import cli2
 from django.apps import apps
 
 
-@cli2.command(color=cli2.GREEN)
 def settings():
     """Print out DJANGO_SETTINGS_MODULE."""
     if 'DJANGO_SETTINGS_MODULE' in os.environ:
@@ -36,6 +35,7 @@ def settings():
             if m:
                 mod = m.group(1)
                 return mod
+settings.cli2 = dict(color='green')  # noqa
 
 
 def _model_data(obj, keys=None):
@@ -87,18 +87,22 @@ def save(modelname, *args, **kwargs):
         obj, created = model.objects.get_or_create(**kwargs)
 
     if created:
-        print(f'{cli2.YELLOW}Created{cli2.RESET}')
+        print(f'{cli2.c.yellow}Created{cli2.c.reset}')
     else:
-        print(f'{cli2.GREEN}Updated{cli2.RESET}')
+        print(f'{cli2.c.green}Updated{cli2.c.reset}')
 
-    print(tabulate.tabulate([
-        (k, v)
-        for k, v in _model_data(obj).items()
-        if k in args or not args and k not in console_script.parser.dashargs
-    ]))
+    data = []
+    exclude = [a[1:] for a in args if a.startswith('-')]
+    include = [a for a in args if not a.startswith('-')]
+    for key, value in _model_data(obj).items():
+        if exclude and key in exclude:
+            continue
+        if include and key not in include:
+            continue
+        data.append((key, value))
+    print(tabulate.tabulate(data))
 
 
-@cli2.command(color=cli2.GREEN)
 def ls(modelname, *args, **kwargs):
     """Search models
 
@@ -117,9 +121,9 @@ def ls(modelname, *args, **kwargs):
         return
 
     _printqs(models, args)
+ls.cli2 = dict(color='green')  # noqa
 
 
-@cli2.command(color=cli2.RED)
 def delete(modelname, *args, **kwargs):
     """
     Delete a model filtered with kwargs.
@@ -144,9 +148,9 @@ def delete(modelname, *args, **kwargs):
     count = len(qs)
     qs.delete()
     print(f'Deleted {count} objects')
+delete.cli2 = dict(color='red')  # noqa
 
 
-@cli2.command(color=cli2.GREEN)
 def detail(modelname, *args, **kwargs):
     """Print detail for a model.
 
@@ -163,6 +167,7 @@ def detail(modelname, *args, **kwargs):
         for k, v in _model_data(obj).items()
         if k in args or not args
     ]))
+detail.cli2 = dict(color='green')  # noqa
 
 
 def run(callback, *args, **kwargs):
@@ -174,9 +179,10 @@ def run(callback, *args, **kwargs):
 
         djcli run yourapp.models.somecallback
     """
-    importable = cli2.Importable.factory(callback)
+    importable = cli2.Node.factory(callback)
     if importable.target is None:
-        raise cli2.Cli2Exception('Could not import ' + callback)
+        print('Could not import ' + callback)
+        sys.exit(1)
     elif callable(importable.target):
         return importable.target(*args, **kwargs)
     else:
@@ -194,23 +200,19 @@ def chpasswd(password, **kwargs):
         djcli chpasswd username=... thepassword
         echo thepassword | djcli chpasswd username=... -
     """
-
     from django.conf import settings
     model = apps.get_model(settings.AUTH_USER_MODEL)
     try:
         user = model.objects.get(**kwargs)
     except model.DoesNotExist as e:
-        raise cli2.Cli2Exception(str(e))
+        print(str(e))
+        sys.exit(1)
     user.set_password(password)
     user.save()
     print('Password updated !')
 
 
-@cli2.command(color=cli2.GREEN)
-@cli2.option('raw', alias='r', color=cli2.GREEN, help='Raw value print')
-@cli2.option('all', alias='a', color=cli2.GREEN,
-             help='Print all settings, including default values')
-def setting(*names):
+def setting(*names, raw: bool = False, print_all: bool = False):
     """Show settings from django.
 
     How many times have you done the following ?
@@ -239,16 +241,14 @@ def setting(*names):
         else:
             print(f'{name}={pprint.pformat(setting)}')
 
-    raw = console_script.parser.options.get('raw', False)
-    print_all = console_script.parser.options.get('all', False)
     if names:
         for name in names:
-            importable = cli2.Importable.factory(
+            importable = cli2.Node.factory(
                 f'django.conf.settings.{name}'
             )
             print_setting(importable.target)
     else:
-        importable = cli2.Importable.factory(
+        importable = cli2.Node.factory(
             f'django.conf.settings'
         )
         for name in dir(importable.target):
@@ -258,17 +258,23 @@ def setting(*names):
                  and (print_all or importable.target.is_overridden(name))
                  and not inspect.ismodule(setting))):
                 print_setting(setting)
+setting.cli2 = dict(color='green')  # noqa
+setting.cli2_raw = dict(alias='--raw', doc='Raw value print')
+setting.cli2_print_all = dict(
+    alias='--all',
+    doc='Print all settings, including default values'
+)
 
 
-@cli2.command(color=cli2.GREEN)
-@cli2.option('quiet', alias='q', help='Silence all output.')
-@cli2.option('debug', alias='d', help='Display debug output (overrides -q).')
-def dbcheck(sleep_for=1.0, max_tries=None):
+def dbcheck(quiet: bool = False, debug: bool = False, sleep_for: float = 1,
+            max_tries: int = None):
     """Check all database connections.
 
     Verify that all the databases are ready (e.g. before attempting to start
     Django dev server).
 
+    :param bool quiet:      Silence all output.
+    :param bool debug:      Display debug output (overrides -q)
     :param float sleep_for: Seconds to sleep between attempts.
     :param int max_tries:   Number of attempts to retry before failing.
     """
@@ -276,9 +282,6 @@ def dbcheck(sleep_for=1.0, max_tries=None):
     from django.db.utils import OperationalError
     from time import sleep
 
-    quiet = console_script.parser.options.get('quiet', False)
-    debug = console_script.parser.options.get('debug', False)
-    sleep_for = float(sleep_for)
     max_tries = int(max_tries) if max_tries else None
     exc = None
 
@@ -290,6 +293,7 @@ def dbcheck(sleep_for=1.0, max_tries=None):
     for conn in connections:
         db_conn = False
         attempts = 0
+
         def wait():
             return attempts < max_tries if max_tries else True
 
@@ -316,28 +320,33 @@ def dbcheck(sleep_for=1.0, max_tries=None):
                 f'Attempting to connect to database {conn} returns an error:'
             )
             print(exc)
-        console_script.exit_code = 1
+        sys.exit(1)
+dbcheck.cli2 = dict(color='green')  # noqa
+dbcheck.cli2_quiet = dict(alias='--quiet')
+dbcheck.cli2_debug = dict(alias='--debug')
 
 
-class ConsoleScript(cli2.ConsoleScript):
+class ConsoleScript(cli2.Group):
 
     def setup(self):
         mod = os.getenv('DJANGO_SETTINGS_MODULE', settings())
 
         if not mod:
-            raise cli2.Cli2Exception('DJANGO_SETTINGS_MODULE not found')
+            print('DJANGO_SETTINGS_MODULE not found')
+            sys.exit(1)
 
         os.environ['DJANGO_SETTINGS_MODULE'] = mod
 
         try:
             import django
         except ImportError:
-            raise cli2.Cli2Exception('ImportError: django package not found')
+            print('ImportError: django package not found')
+            sys.exit(1)
 
         try:
             django.setup()
         except Exception:
-            print(f'{cli2.RED}Setting up django has failed !')
+            print(f'{cli2.c.red}Setting up django has failed !')
 
             if 'DJANGO_SETTINGS_MODULE' in os.environ:
                 print(f'DJANGO_SETTINGS_MODULE='
@@ -347,17 +356,26 @@ class ConsoleScript(cli2.ConsoleScript):
             else:
                 print('DJANGO_SETTINGS_MODULE env var not set !')
 
-            print(f'{cli2.RESET}')
+            print(f'{cli2.c.reset}')
             sys.exit(1)
 
         self._setup = True
 
-    def call(self, command):
-        if command.name not in ('help', 'settings_find'):
+    def __call__(self, *argv):
+        if argv and argv[0] not in ('help', 'settings'):
             if not getattr(self, '_setup', False):
                 self.setup()
 
-        return super().call(command)
+        return super().__call__(*argv)
 
 
-console_script = ConsoleScript(__doc__).add_module('djcli')
+cli = ConsoleScript(doc=__doc__)
+cli.cmd(settings)
+cli.cmd(save)
+cli.cmd(ls)
+cli.cmd(delete)
+cli.cmd(detail)
+cli.cmd(run)
+cli.cmd(chpasswd)
+cli.cmd(setting)
+cli.cmd(dbcheck)

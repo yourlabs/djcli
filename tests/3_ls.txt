@@ -1,8 +1,7 @@
 command: djcli ls auth.user first_name username is_staff
-retcode: 1
+retcode: 0
 stdout:
 ----------  --------  --------
 first_name  is_staff  username
-            True      staff
-test        False     me
+test        True      me
 ----------  --------  --------

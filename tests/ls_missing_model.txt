@@ -1,9 +1,8 @@
 command: djcli ls
 retcode: 1
 stdout:
-Missing arguments: modelname
+ls() missing 1 required positional argument: 'modelname'
 
-Signature: ls(modelname, *args, **kwargs)
 Search models
 
 kwargs are passed to filter.
@@ -12,3 +11,4 @@ It shows all fields by default, you can restrict them with args.
 Show username and email for superusers::
 
     djcli ls auth.user is_superuser=1 username email
+

@@ -1,15 +1,5 @@
 command: djcli save auth.user +username=me first_name=test -password -date_joined
-retcode: 1
+retcode: 0
 stdout:
-Created
-------------  -----
-id            2
-last_login
-is_superuser  False
-username      me
-first_name    test
-last_name
-email
-is_staff      False
-is_active     True
-------------  -----
+[38;5;10mUpdated[0m
+

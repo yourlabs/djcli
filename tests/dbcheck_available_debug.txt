@@ -1,4 +1,4 @@
 command: djcli dbcheck --debug
-retcode: 1
+retcode: 0
 stdout:
-dbcheck parameters: sleep_for=1.0; max_tries=None
+dbcheck parameters: sleep_for=1; max_tries=None

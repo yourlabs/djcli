@@ -1,4 +1,4 @@
-command: djcli chpasswd test username=staff
-retcode: 1
+command: djcli chpasswd test username=me
+retcode: 0
 stdout:
 Password updated !
