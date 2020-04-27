@@ -1,9 +1,8 @@
 command: djcli chpasswd username=fail
 retcode: 1
 stdout:
-Missing arguments: password
+chpasswd() missing 1 required positional argument: 'password'
 
-Signature: chpasswd(password, **kwargs)
 Change the password for user.
 
 It takes the password as argument, that you can use `-` for stdin.
@@ -13,3 +12,4 @@ Example:
 
     djcli chpasswd username=... thepassword
     echo thepassword | djcli chpasswd username=... -
+
