@@ -17,6 +17,52 @@ import cli2
 from django.apps import apps
 
 
+class ConsoleScript(cli2.Group):
+    def setup(self):
+        mod = os.getenv('DJANGO_SETTINGS_MODULE', settings())
+
+        if not mod:
+            print('DJANGO_SETTINGS_MODULE not found')
+            sys.exit(1)
+
+        os.environ['DJANGO_SETTINGS_MODULE'] = mod
+
+        try:
+            import django
+        except ImportError:
+            print('ImportError: django package not found')
+            sys.exit(1)
+
+        try:
+            django.setup()
+        except Exception:
+            print(f'{cli2.c.red}Setting up django has failed !')
+
+            if 'DJANGO_SETTINGS_MODULE' in os.environ:
+                print(f'DJANGO_SETTINGS_MODULE='
+                      f'{os.getenv("DJANGO_SETTINGS_MODULE")}')
+                traceback.print_exc()
+
+            else:
+                print('DJANGO_SETTINGS_MODULE env var not set !')
+
+            print(f'{cli2.c.reset}')
+            sys.exit(1)
+
+        self._setup = True
+
+    def __call__(self, *argv):
+        if argv and argv[0] not in ('help', 'settings'):
+            if not getattr(self, '_setup', False):
+                self.setup()
+
+        return super().__call__(*argv)
+
+
+cli = ConsoleScript(doc=__doc__)
+
+
+@cli.cmd(color='green')
 def settings():
     """Print out DJANGO_SETTINGS_MODULE."""
     if 'DJANGO_SETTINGS_MODULE' in os.environ:
@@ -35,7 +81,6 @@ def settings():
             if m:
                 mod = m.group(1)
                 return mod
-settings.cli2 = dict(color='green')  # noqa
 
 
 def _model_data(obj, keys=None):
@@ -63,6 +108,7 @@ def _model_get(modelname):
     return apps.get_model(modelname)
 
 
+@cli.cmd
 def save(modelname, *args, **kwargs):
     """Update or create a model.
 
@@ -103,6 +149,7 @@ def save(modelname, *args, **kwargs):
     print(tabulate.tabulate(data))
 
 
+@cli.cmd(color='green')  # noqa
 def ls(modelname, *args, **kwargs):
     """Search models
 
@@ -121,9 +168,9 @@ def ls(modelname, *args, **kwargs):
         return
 
     _printqs(models, args)
-ls.cli2 = dict(color='green')  # noqa
 
 
+@cli.cmd(color='red')
 def delete(modelname, *args, **kwargs):
     """
     Delete a model filtered with kwargs.
@@ -148,9 +195,9 @@ def delete(modelname, *args, **kwargs):
     count = len(qs)
     qs.delete()
     print(f'Deleted {count} objects')
-delete.cli2 = dict(color='red')  # noqa
 
 
+@cli.cmd(color='green')
 def detail(modelname, *args, **kwargs):
     """Print detail for a model.
 
@@ -167,9 +214,9 @@ def detail(modelname, *args, **kwargs):
         for k, v in _model_data(obj).items()
         if k in args or not args
     ]))
-detail.cli2 = dict(color='green')  # noqa
 
 
+@cli.cmd
 def run(callback, *args, **kwargs):
     """Execute a callback in Django context.
 
@@ -189,6 +236,7 @@ def run(callback, *args, **kwargs):
         return importable.target
 
 
+@cli.cmd
 def chpasswd(password, **kwargs):
     """Change the password for user.
 
@@ -212,6 +260,13 @@ def chpasswd(password, **kwargs):
     print('Password updated !')
 
 
+@cli.cmd(color='green')  # noqa
+@cli.arg('raw', alias='--raw', doc='Raw value print')
+@cli.arg(
+    'print_all',
+    alias='--all',
+    doc='Print all settings, including default values'
+)
 def setting(*names, raw: bool = False, print_all: bool = False):
     """Show settings from django.
 
@@ -258,14 +313,11 @@ def setting(*names, raw: bool = False, print_all: bool = False):
                  and (print_all or importable.target.is_overridden(name))
                  and not inspect.ismodule(setting))):
                 print_setting(setting)
-setting.cli2 = dict(color='green')  # noqa
-setting.cli2_raw = dict(alias='--raw', doc='Raw value print')
-setting.cli2_print_all = dict(
-    alias='--all',
-    doc='Print all settings, including default values'
-)
 
 
+@cli.cmd(color='green')
+@cli.arg('quiet', alias='--quiet')
+@cli.arg('debug', alias='--debug')
 def dbcheck(quiet: bool = False, debug: bool = False, sleep_for: float = 1,
             max_tries: int = None):
     """Check all database connections.
@@ -321,61 +373,3 @@ def dbcheck(quiet: bool = False, debug: bool = False, sleep_for: float = 1,
             )
             print(exc)
         sys.exit(1)
-dbcheck.cli2 = dict(color='green')  # noqa
-dbcheck.cli2_quiet = dict(alias='--quiet')
-dbcheck.cli2_debug = dict(alias='--debug')
-
-
-class ConsoleScript(cli2.Group):
-
-    def setup(self):
-        mod = os.getenv('DJANGO_SETTINGS_MODULE', settings())
-
-        if not mod:
-            print('DJANGO_SETTINGS_MODULE not found')
-            sys.exit(1)
-
-        os.environ['DJANGO_SETTINGS_MODULE'] = mod
-
-        try:
-            import django
-        except ImportError:
-            print('ImportError: django package not found')
-            sys.exit(1)
-
-        try:
-            django.setup()
-        except Exception:
-            print(f'{cli2.c.red}Setting up django has failed !')
-
-            if 'DJANGO_SETTINGS_MODULE' in os.environ:
-                print(f'DJANGO_SETTINGS_MODULE='
-                      f'{os.getenv("DJANGO_SETTINGS_MODULE")}')
-                traceback.print_exc()
-
-            else:
-                print('DJANGO_SETTINGS_MODULE env var not set !')
-
-            print(f'{cli2.c.reset}')
-            sys.exit(1)
-
-        self._setup = True
-
-    def __call__(self, *argv):
-        if argv and argv[0] not in ('help', 'settings'):
-            if not getattr(self, '_setup', False):
-                self.setup()
-
-        return super().__call__(*argv)
-
-
-cli = ConsoleScript(doc=__doc__)
-cli.cmd(settings)
-cli.cmd(save)
-cli.cmd(ls)
-cli.cmd(delete)
-cli.cmd(detail)
-cli.cmd(run)
-cli.cmd(chpasswd)
-cli.cmd(setting)
-cli.cmd(dbcheck)
