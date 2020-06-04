@@ -261,7 +261,7 @@ def chpasswd(password, **kwargs):
 
 
 @cli.cmd(color='green')  # noqa
-@cli.arg('raw', alias='--raw', doc='Raw value print')
+@cli.arg('raw', alias=['-r', '--raw'], doc='Raw value print')
 @cli.arg(
     'print_all',
     alias='--all',
@@ -290,7 +290,6 @@ def setting(*names, raw: bool = False, print_all: bool = False):
     """
 
     def print_setting(setting):
-        # setting = getattr(importable.target, name)
         if raw:
             print(setting)
         else:
