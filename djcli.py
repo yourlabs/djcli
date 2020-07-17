@@ -302,9 +302,7 @@ def setting(*names, raw: bool = False, print_all: bool = False):
             )
             print_setting(importable.target)
     else:
-        importable = cli2.Node.factory(
-            f'django.conf.settings'
-        )
+        importable = cli2.Node.factory('django.conf.settings')
         for name in dir(importable.target):
             setting = getattr(importable.target, name)
             if ((not name.startswith('_')
