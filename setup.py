@@ -14,7 +14,13 @@ setup(
     python_requires='>=3',
     install_requires=['cli2>=2.2.0', 'tabulate'],
     extras_require={
-        'test': ['django', 'pytest', 'pytest-cov', 'pytest-django'],
+        'test': [
+            'django',
+            'pytest',
+            'pytest-cov',
+            'pytest-django',
+            'pytest-mock'
+        ],
     },
     entry_points={
         'console_scripts': [
