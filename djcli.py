@@ -109,14 +109,11 @@ def _model_get(modelname):
 
 
 @cli.cmd
-def save(modelname, *args, **kwargs):
+def save(modelname, **kwargs):
     """Update or create a model.
 
-    # Create user or update their email by username, don't show their password
-    djcli save auth.user +username=test email=new@email.com -password
-
-    # same but show only email
-    djcli save auth.user +username=test email=new@email.com email
+    # Create user or update their email by username
+    djcli save auth.user +username=test email=new@email.com
     """
     model = _model_get(modelname)
 
@@ -133,20 +130,9 @@ def save(modelname, *args, **kwargs):
         obj, created = model.objects.get_or_create(**kwargs)
 
     if created:
-        print(f'{cli2.c.yellow}Created{cli2.c.reset}')
+        print(f'{obj} {cli2.c.yellow}Created{cli2.c.reset}')
     else:
-        print(f'{cli2.c.green}Updated{cli2.c.reset}')
-
-    data = []
-    exclude = [a[1:] for a in args if a.startswith('-')]
-    include = [a for a in args if not a.startswith('-')]
-    for key, value in _model_data(obj).items():
-        if exclude and key in exclude:
-            continue
-        if include and key not in include:
-            continue
-        data.append((key, value))
-    print(tabulate.tabulate(data))
+        print(f'{obj} {cli2.c.green}Updated{cli2.c.reset}')
 
 
 @cli.cmd(color='green')  # noqa

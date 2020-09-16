@@ -34,6 +34,7 @@ DATABASES={'default': {'ATOMIC_REQUESTS': False,
              'PORT': '',
              'TEST': {'CHARSET': None,
                       'COLLATION': None,
+                      'MIGRATE': True,
                       'MIRROR': None,
                       'NAME': None},
              'TIME_ZONE': None,
@@ -45,15 +46,12 @@ DATETIME_FORMAT='N j, Y, P'
 DATETIME_INPUT_FORMATS=['%Y-%m-%d %H:%M:%S',
  '%Y-%m-%d %H:%M:%S.%f',
  '%Y-%m-%d %H:%M',
- '%Y-%m-%d',
  '%m/%d/%Y %H:%M:%S',
  '%m/%d/%Y %H:%M:%S.%f',
  '%m/%d/%Y %H:%M',
- '%m/%d/%Y',
  '%m/%d/%y %H:%M:%S',
  '%m/%d/%y %H:%M:%S.%f',
- '%m/%d/%y %H:%M',
- '%m/%d/%y']
+ '%m/%d/%y %H:%M']
 DATE_FORMAT='N j, Y'
 DATE_INPUT_FORMATS=['%Y-%m-%d',
  '%m/%d/%Y',
@@ -70,9 +68,11 @@ DEBUG=True
 DEBUG_PROPAGATE_EXCEPTIONS=False
 DECIMAL_SEPARATOR='.'
 DEFAULT_CHARSET='utf-8'
+DEFAULT_EXCEPTION_REPORTER='django.views.debug.ExceptionReporter'
 DEFAULT_EXCEPTION_REPORTER_FILTER='django.views.debug.SafeExceptionReporterFilter'
 DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage'
 DEFAULT_FROM_EMAIL='webmaster@localhost'
+DEFAULT_HASHING_ALGORITHM='sha256'
 DEFAULT_INDEX_TABLESPACE=''
 DEFAULT_TABLESPACE=''
 DISALLOWED_USER_AGENTS=[]
@@ -88,7 +88,6 @@ EMAIL_TIMEOUT=None
 EMAIL_USE_LOCALTIME=False
 EMAIL_USE_SSL=False
 EMAIL_USE_TLS=False
-FILE_CHARSET='utf-8'
 FILE_UPLOAD_DIRECTORY_PERMISSIONS=None
 FILE_UPLOAD_HANDLERS=['django.core.files.uploadhandler.MemoryFileUploadHandler',
  'django.core.files.uploadhandler.TemporaryFileUploadHandler']
@@ -109,7 +108,7 @@ INSTALLED_APPS=['django.contrib.admin',
  'django.contrib.staticfiles']
 INTERNAL_IPS=[]
 LANGUAGES=[('en', 'en')]
-LANGUAGES_BIDI=['he', 'ar', 'fa', 'ur']
+LANGUAGES_BIDI=['he', 'ar', 'ar-dz', 'fa', 'ur']
 LANGUAGE_CODE='en-us'
 LANGUAGE_COOKIE_AGE=None
 LANGUAGE_COOKIE_DOMAIN=None
@@ -126,7 +125,7 @@ LOGIN_URL='/accounts/login/'
 LOGOUT_REDIRECT_URL=None
 MANAGERS=[]
 MEDIA_ROOT=''
-MEDIA_URL=''
+MEDIA_URL='/'
 MESSAGE_STORAGE='django.contrib.messages.storage.fallback.FallbackStorage'
 MIDDLEWARE=['django.middleware.security.SecurityMiddleware',
  'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,6 +141,7 @@ PASSWORD_HASHERS=['django.contrib.auth.hashers.PBKDF2PasswordHasher',
  'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
  'django.contrib.auth.hashers.Argon2PasswordHasher',
  'django.contrib.auth.hashers.BCryptSHA256PasswordHasher']
+PASSWORD_RESET_TIMEOUT=259200
 PASSWORD_RESET_TIMEOUT_DAYS=3
 PREPEND_WWW=False
 ROOT_URLCONF='djcli_test_project.urls'
@@ -153,7 +153,7 @@ SECURE_HSTS_PRELOAD=False
 SECURE_HSTS_SECONDS=0
 SECURE_PROXY_SSL_HEADER=None
 SECURE_REDIRECT_EXEMPT=[]
-SECURE_REFERRER_POLICY=None
+SECURE_REFERRER_POLICY='same-origin'
 SECURE_SSL_HOST=None
 SECURE_SSL_REDIRECT=False
 SERVER_EMAIL='root@localhost'
